@@ -34,7 +34,7 @@
 @end
 
 @implementation OAMutableURLRequest
-@synthesize signature, nonce;
+@synthesize signature, nonce, callbackURL;
 
 #pragma mark init
 
@@ -108,7 +108,8 @@ signatureProvider:(id<OASignatureProviding, NSObject>)aProvider
 	NSMutableArray *chunks = [[NSMutableArray alloc] init];
 	[chunks addObject:[NSString stringWithFormat:@"realm=\"%@\"", [realm encodedURLParameterString]]];
 	[chunks addObject:[NSString stringWithFormat:@"oauth_consumer_key=\"%@\"", [consumer.key encodedURLParameterString]]];
-
+    if(callbackURL)
+      [chunks addObject:[NSString stringWithFormat:@"oauth_callback=\"%@\"", [callbackURL encodedURLParameterString]]];
 	NSDictionary *tokenParameters = [token parameters];
 	for (NSString *k in tokenParameters) {
 		[chunks addObject:[NSString stringWithFormat:@"%@=\"%@\"", k, [[tokenParameters objectForKey:k] encodedURLParameterString]]];
@@ -150,6 +151,11 @@ signatureProvider:(id<OASignatureProviding, NSObject>)aProvider
 	NSMutableArray *parameterPairs = [[NSMutableArray alloc] initWithCapacity:(5 + [parameters count] + [tokenParameters count])];
     
 	OARequestParameter *parameter;
+    if(callbackURL){
+        parameter = [[OARequestParameter alloc] initWithName:@"oauth_callback" value: callbackURL];
+        [parameterPairs addObject:[parameter URLEncodedNameValuePair]];
+        [parameter release];
+    }
 	parameter = [[OARequestParameter alloc] initWithName:@"oauth_consumer_key" value:consumer.key];
 	
     [parameterPairs addObject:[parameter URLEncodedNameValuePair]];
@@ -193,6 +199,8 @@ signatureProvider:(id<OASignatureProviding, NSObject>)aProvider
 	[token release];
 	[(NSObject*)signatureProvider release];
 	[timestamp release];
+    if(callbackURL)
+    [callbackURL release];
 	CFRelease(nonce);
 	[super dealloc];
 }
