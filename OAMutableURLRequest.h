@@ -43,10 +43,14 @@
     NSString *nonce;
     NSString *timestamp;
     NSString *callbackURL;
+    NSString *scope;
+    NSString *appName;
 }
 @property(readonly) NSString *signature;
 @property(readonly) NSString *nonce;
 @property(nonatomic,retain) NSString *callbackURL;
+@property(nonatomic,retain) NSString *scope;
+@property(nonatomic,retain) NSString *appName;
 
 - (id)initWithURL:(NSURL *)aUrl
 		 consumer:(OAConsumer *)aConsumer

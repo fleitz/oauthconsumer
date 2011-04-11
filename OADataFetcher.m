@@ -61,6 +61,7 @@
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    NSLog(@"Data: %@",[[[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding] autorelease]);
 	[responseData appendData:data];
 }
 
